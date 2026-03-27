@@ -196,8 +196,35 @@ def test_limit_of_selections():
     question1.correct_selected_choices([1,2,3])
     question2.correct_selected_choices([1,2,3,4,5])
 
+# =========================
+# ====== FIXTURES =========
+# =========================
 
-  
+@pytest.fixture
+def sample_question():
+    q = Question('sample question')
+    q.add_choice('c1', False)
+    q.add_choice('c2', False)
+    q.add_choice('c3', False)
+    return q
+
+def test_add_choice_invalid_text(sample_question):
+    with pytest.raises(Exception):
+        sample_question.add_choice('', False)
+
+    with pytest.raises(Exception):
+        sample_question.add_choice('a' * 101, False)
+
+
+def test_set_correct_choices_does_not_reset_previous(sample_question):
+    sample_question.set_correct_choices([1])
+    sample_question.set_correct_choices([2])
+
+    correct_ids = [c.id for c in sample_question.choices if c.is_correct]
+
+    assert 1 in correct_ids
+    assert 2 in correct_ids
+    assert len(correct_ids) == 2
 
 
 
